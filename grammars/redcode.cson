@@ -1,0 +1,85 @@
+# TextMate tutorial: http://manual.macromates.com/en/language_grammars
+
+# Regex to convert keys to unquoted: '(include|match|captures|begin|end|beginCaptures|endCaptures|name|patterns|0|1|2|3|4|5|6|7|8|9|comment|fileTypes|scopeName|repository|contentName|firstLineMatch|foldingStartMarker|foldingStopMarker)':
+
+scopeName: 'source.red' # <scope> should be a short, unique indicator for the language ("js", "php", "c", etc.)
+name: 'Redcode' # The title that will show up in grammar selection and on your status bar.
+fileTypes: [ # An array of file extensions.
+  'red'
+]
+firstLineMatch: '^;redcode.*' # A regular expression that is matched against the first line of the document when Atom is trying to decide if the grammar is appropriate. Useful for shell scripts, mostly.
+foldingStartMarker: '' # A regular expression that checks for the start of a foldable area (such as `{`).
+foldingStopMarker: '' # A regular expression that checks for the end of a foldable area (such as `}`). If both folding markers are matched in the same line, there will be no foldable area.
+patterns: [ # An array of individual pattern declarations.
+  {
+    match: '(^;(name|author|strategy|version|date|redcode.*))( (.*))?' # A regular expression that matches some content. Optional.
+    captures: # An array of `name` designations for `match` expressions that capture multiple bits. Optional.
+      # Arrays start at zero. This one will catch the whole regex. 1+ will catch the capture groups.
+        # This should be self-explanatory by now.
+      1: #;(name|author|strategy)
+        name: 'keyword.other.info.red'
+      4: #.*
+        name: 'string.unquoted.info.red'
+  }
+  {
+    match: '(^;assert) (.*)'
+    captures:
+      1: #;assert
+        name: 'keyword.other.assert.red'
+      #2: #.*
+  }
+  {
+    include: '#commentSemicolon'
+  }
+  {
+    begin: '(?i)[ \t]*for[ \t]+0'
+    end: '(?i)rof'
+    name: 'comment.block.forcomment.red'
+    patterns: [
+      {
+        include: '#commentSemicolon'
+      }
+      {
+        include: '#forRecursive'
+      }
+    ]
+  }
+  {
+    match: '(?i)([ \t]|^)(for|rof|org|end|equ|pin)([ \t]|$)'
+    captures:
+      2: #pseudoop
+        name: 'keyword.other.pseudoop.red'
+  }
+  {
+    match: '(?i)([ \t]|^)(dat|mov|add|sub|mul|div|mod|jmp|jmz|jmn|djn|spl|seq|sne|cmp|slt|nop|ldp|stp)(\.(ab|ba|a|b|f|x|i))?([ \t]|$)'
+    captures:
+      2: #opcode
+        name: 'keyword.other.opcode.red'
+      3: #modifier
+        name: 'keyword.other.modifier.red'
+  }
+  {
+    match: '([#$*@{}<>])[^,;\v]+'
+    captures:
+      1: #[#$*@{}<>]
+        name: 'keyword.operator.addrmode.red'
+  }
+]
+
+repository:
+  forRecursive: {
+    begin: '(?i)for'
+    end: '(?i)rof'
+    patterns: [
+      {
+        include: '#commentSemicolon'
+      }
+      {
+        include: '#forRecursive'
+      }
+    ]
+  }
+  commentSemicolon: {
+    match: ';.*'
+    name: 'comment.line.semicolon.comment.red'
+  }

@@ -1,0 +1,6 @@
+'.source.red':
+  'editor':
+    'softTabs': false
+    'tabLength': 8
+    'increaseIndentPattern': '(?i)^[ \\t]*for\\b'
+    'decreaseIndentPattern': '(?i)^[ \\t]*rof\\b'
